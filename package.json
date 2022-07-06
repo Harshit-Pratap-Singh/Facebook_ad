@@ -1,0 +1,22 @@
+{
+  "name": "facebook_ad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "axios": "^0.27.2",
+    "axois": "^0.0.1-security",
+    "dotenv": "^16.0.1",
+    "facebook-nodejs-business-sdk": "^13.0.0",
+    "image-to-base64": "^2.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.41"
+  }
+}
