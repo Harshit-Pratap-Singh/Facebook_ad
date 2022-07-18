@@ -38,18 +38,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 require("dotenv").config();
 var axios_1 = require("axios");
+var date = require("date-and-time");
 var client_id = process.env.CLIENT_ID;
 var client_secret = process.env.CLIENT_SECRET;
 var refresh_token = process.env.REFRESH_TOKEN;
-console.log('re-->', process.env.CLIENT_SECRET);
 var developer_token = process.env.DEVELOPER_TOKEN;
 var getAccessToken = function (client_id, client_secret, refresh_token) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, err_1;
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var response, data, err_1;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _c.trys.push([0, 2, , 3]);
+                _d.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, axios_1["default"].post("https://www.googleapis.com/oauth2/v3/token", null, {
                         params: {
                             client_id: client_id,
@@ -59,14 +59,20 @@ var getAccessToken = function (client_id, client_secret, refresh_token) { return
                         }
                     })];
             case 1:
-                response = _c.sent();
-                // console.log(response?.data?.access_token);
-                return [2 /*return*/, (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.access_token];
+                response = _d.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.access_token);
+                data = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.access_token;
+                return [2 /*return*/, {
+                        success: true,
+                        data: data
+                    }];
             case 2:
-                err_1 = _c.sent();
+                err_1 = _d.sent();
                 // console.log(err);
-                console.log((_b = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _b === void 0 ? void 0 : _b.data);
-                return [2 /*return*/, ""];
+                console.log((_c = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _c === void 0 ? void 0 : _c.data);
+                return [2 /*return*/, {
+                        success: false
+                    }];
             case 3: return [2 /*return*/];
         }
     });
@@ -93,30 +99,36 @@ var getCampaigns = function () { return __awaiter(void 0, void 0, void 0, functi
             case 2:
                 response = _c.sent();
                 console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
-                return [2 /*return*/, response === null || response === void 0 ? void 0 : response.data];
+                return [2 /*return*/, {
+                        success: true,
+                        data: response === null || response === void 0 ? void 0 : response.data
+                    }];
             case 3:
                 err_2 = _c.sent();
                 console.log((_b = err_2 === null || err_2 === void 0 ? void 0 : err_2.response) === null || _b === void 0 ? void 0 : _b.data);
-                return [2 /*return*/, {}];
+                return [2 /*return*/, {
+                        success: false
+                    }];
             case 4: return [2 /*return*/];
         }
     });
 }); };
-getCampaigns();
-var createCampaignBudget = function (access_token, name, amountMicros, type) { return __awaiter(void 0, void 0, void 0, function () {
+// getCampaigns();
+var createCampaignBudget = function (access_token, budget, customer_id, campaign_objective) { return __awaiter(void 0, void 0, void 0, function () {
     var response, err_3;
     var _a, _b, _c, _d, _e;
     return __generator(this, function (_f) {
         switch (_f.label) {
             case 0:
                 _f.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/4824749666/campaignBudgets:mutate", {
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/campaignBudgets:mutate"), {
                         operations: [
                             {
                                 create: {
-                                    name: "".concat(name, " Budget"),
-                                    type: type || "STANDARD",
-                                    amountMicros: amountMicros || "20000"
+                                    name: "".concat(campaign_objective, " uuidv4()"),
+                                    type: "STANDARD",
+                                    amountMicros: budget * 1000000,
+                                    deliveryMethod: "STANDARD"
                                 }
                             },
                         ]
@@ -129,43 +141,52 @@ var createCampaignBudget = function (access_token, name, amountMicros, type) { r
             case 1:
                 response = _f.sent();
                 console.log((_b = (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results[0]) === null || _b === void 0 ? void 0 : _b.resourceName);
-                return [2 /*return*/, (_d = (_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.results[0]) === null || _d === void 0 ? void 0 : _d.resourceName];
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_d = (_c = response === null || response === void 0 ? void 0 : response.data) === null || _c === void 0 ? void 0 : _c.results[0]) === null || _d === void 0 ? void 0 : _d.resourceName
+                    }];
             case 2:
                 err_3 = _f.sent();
                 console.log((_e = err_3 === null || err_3 === void 0 ? void 0 : err_3.response) === null || _e === void 0 ? void 0 : _e.data);
-                return [2 /*return*/, ""];
+                return [2 /*return*/, {
+                        success: false
+                    }];
             case 3: return [2 /*return*/];
         }
     });
 }); };
-var createCampaigns = function (name, type, status) { return __awaiter(void 0, void 0, void 0, function () {
-    var access_token, campaignsBudget, response, err_4;
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+var createCampaigns = function (access_token, campaign_name, advertising_channel_type, customer_id, campaign_budget, start_date, end_date) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, err_4;
+    var _a, _b, _c, _d, _e, _f, _g;
+    return __generator(this, function (_h) {
+        switch (_h.label) {
             case 0:
-                _d.trys.push([0, 4, , 5]);
-                return [4 /*yield*/, getAccessToken(client_id, client_secret, refresh_token)];
-            case 1:
-                access_token = _d.sent();
-                return [4 /*yield*/, createCampaignBudget(access_token, name)];
-            case 2:
-                campaignsBudget = _d.sent();
-                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/4824749666/campaigns:mutate", {
+                _h.trys.push([0, 2, , 3]);
+                //
+                //converting unix time to acceptable format "YYYY-MM-DD"
+                start_date = date.format(new Date(start_date), "YYYY-MM-DD");
+                end_date = date.format(new Date(end_date), "YYYY-MM-DD");
+                console.log({ start_date: start_date });
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/campaigns:mutate"), {
                         operations: [
                             {
                                 create: {
-                                    name: name,
-                                    status: status || "PAUSED",
-                                    advertisingChannelType: type || "SEARCH",
-                                    campaignBudget: "".concat(campaignsBudget),
+                                    name: campaign_name,
+                                    status: "PAUSED",
+                                    //type:"STANDARD",
+                                    advertisingChannelType: advertising_channel_type,
+                                    campaignBudget: campaign_budget,
+                                    startDate: start_date,
+                                    endDate: end_date,
                                     networkSettings: {
                                         targetGoogleSearch: true,
                                         targetSearchNetwork: true,
                                         targetContentNetwork: true,
                                         targetPartnerSearchNetwork: false
                                     },
-                                    target_spend: {}
+                                    manualCpc: {
+                                        enhancedCpcEnabled: true
+                                    }
                                 }
                             },
                         ]
@@ -175,16 +196,38 @@ var createCampaigns = function (name, type, status) { return __awaiter(void 0, v
                             "developer-token": developer_token
                         }
                     })];
-            case 3:
-                response = _d.sent();
+            case 1:
+                response = _h.sent();
                 console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
-                return [2 /*return*/, (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results];
-            case 4:
-                err_4 = _d.sent();
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results
+                    }];
+            case 2:
+                err_4 = _h.sent();
                 console.log((_c = err_4 === null || err_4 === void 0 ? void 0 : err_4.response) === null || _c === void 0 ? void 0 : _c.data);
-                return [2 /*return*/, []];
-            case 5: return [2 /*return*/];
+                console.log((_g = (_f = (_e = (_d = err_4 === null || err_4 === void 0 ? void 0 : err_4.response) === null || _d === void 0 ? void 0 : _d.data) === null || _e === void 0 ? void 0 : _e.error) === null || _f === void 0 ? void 0 : _f.details[0]) === null || _g === void 0 ? void 0 : _g.errors);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
-// createCampaigns("test 1");
+var test = function () { return __awaiter(void 0, void 0, void 0, function () {
+    var p, s, access_token, customer_id, budget, campaign;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                p = 1658169000000, s = 1658966160000;
+                return [4 /*yield*/, getAccessToken(client_id, client_secret, refresh_token)];
+            case 1:
+                access_token = (_a.sent()).data;
+                customer_id = 4824749666, budget = "customers/4824749666/campaignBudgets/11164576942", campaign = "customers/4824749666/campaigns/17791664075";
+                // createCampaigns(access_token.data, "test 12", "SEARCH", customer_id, budget, p, s);
+                createCampaignBudget(access_token, 30, customer_id, "reach");
+                return [2 /*return*/];
+        }
+    });
+}); };
+test();
