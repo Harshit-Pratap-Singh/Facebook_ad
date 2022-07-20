@@ -623,6 +623,66 @@ var uploadImageAssest = function (access_token, customer_id, image_url, image_he
         }
     });
 }); };
+//------------------------------create search ad------------------------//
+//  https://googleads.googleapis.com/v11/customers/{customerId}/adGroupAds:mutate
+var createSearchAd = function (access_token, customer_id, ad_group_resource_name, website, headlines, descriptions) { return __awaiter(void 0, void 0, void 0, function () {
+    var headline_assets, i, description_assets_1, response, error_2;
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 2, , 3]);
+                headline_assets = [];
+                headline_assets.push({ text: headlines[0], pinnedField: "HEADLINE_1" });
+                for (i = 1; i < headlines.length; i++) {
+                    if (headlines[i].length <= 30)
+                        headline_assets.push({ text: headlines[i] });
+                }
+                description_assets_1 = [];
+                descriptions.map(function (description) {
+                    description_assets_1.push({ text: description });
+                });
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/adGroupAds:mutate"), {
+                        operations: [
+                            {
+                                create: {
+                                    adGroup: ad_group_resource_name,
+                                    status: "PAUSED",
+                                    ad: {
+                                        finalUrls: [website],
+                                        responsiveSearchAd: {
+                                            headlines: headline_assets,
+                                            descriptions: description_assets_1
+                                        }
+                                    }
+                                }
+                            },
+                        ]
+                    }, {
+                        headers: {
+                            Authorization: "Bearer ".concat(access_token),
+                            "developer-token": developer_token
+                        }
+                    })];
+            case 1:
+                response = _e.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results
+                    }];
+            case 2:
+                error_2 = _e.sent();
+                console.log((_d = (_c = error_2 === null || error_2 === void 0 ? void 0 : error_2.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error.details[0].errors);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+//-----------------------------------attach conversion ids to ad groups-------------//
+//  https://googleads.googleapis.com/v11/customers/{customerId}/conversionActions:mutate  
 /////////////////////////////// testing the functions
 var test = function () { return __awaiter(void 0, void 0, void 0, function () {
     var p, s, access_token, customer_id, budget, campaign, location, adGroup, image_url, image_height, image_width;
@@ -641,7 +701,8 @@ var test = function () { return __awaiter(void 0, void 0, void 0, function () {
                 // attachKeywordsToAdGroup(access_token,customer_id,adGroup,["books",'free delivery']);
                 // let image = await imageToBase64("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*");
                 // console.log((image.length)*3/4-2);
-                uploadImageAssest(access_token, customer_id, image_url, image_height, image_width);
+                // uploadImageAssest(access_token,customer_id,image_url,image_height,image_width);
+                createSearchAd(access_token, customer_id, adGroup, "https://www.abc.com", ["heading1", "heading2", "heading3"], ['abc1', 'asdasd', 'hello']);
                 return [2 /*return*/];
         }
     });

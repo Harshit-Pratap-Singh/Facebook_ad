@@ -593,11 +593,12 @@ const uploadImageAssest = async (
           },
         ],
         responseContentType: "MUTABLE_RESOURCE",
-      },{
-        headers:{
+      },
+      {
+        headers: {
           Authorization: `Bearer ${access_token}`,
           "developer-token": developer_token,
-        }
+        },
       }
     );
     console.log(response?.data?.results[0]?.asset?.id);
@@ -614,6 +615,75 @@ const uploadImageAssest = async (
     };
   }
 };
+
+//------------------------------create search ad------------------------//
+
+//  https://googleads.googleapis.com/v11/customers/{customerId}/adGroupAds:mutate
+
+const createSearchAd = async (
+  access_token,
+  customer_id,
+  ad_group_resource_name,
+  website,
+  headlines,
+  descriptions,
+) => {
+  try {
+    let headline_assets = [];
+    headline_assets.push({ text: headlines[0], pinnedField: "HEADLINE_1" });
+    for (let i = 1; i < headlines.length; i++) {
+      if (headlines[i].length <= 30)
+        headline_assets.push({ text: headlines[i] });
+    }
+
+    let description_assets = [];
+    descriptions.map((description) => {
+      description_assets.push({ text: description });
+    });
+
+    const response = await axios.post(
+      `https://googleads.googleapis.com/v11/customers/${customer_id}/adGroupAds:mutate`,
+      {
+        operations: [
+          {
+            create: {
+              adGroup: ad_group_resource_name,
+              status: "PAUSED",
+              ad: {
+                finalUrls: [website],
+                responsiveSearchAd: {
+                  headlines: headline_assets,
+                  descriptions: description_assets,
+                },
+              },
+            },
+          },
+        ],
+      },
+      {
+        headers:{
+          Authorization: `Bearer ${access_token}`,
+          "developer-token": developer_token,
+        }
+      }
+    );
+    console.log(response?.data?.results);
+    return{
+      success:true,
+      data: response?.data?.results
+    }
+    
+  } catch (error) {
+    console.log(error?.response?.data?.error.details[0].errors);
+    return{
+      success: false
+    }    
+  }
+};
+
+//-----------------------------------attach conversion ids to ad groups-------------//
+
+//  https://googleads.googleapis.com/v11/customers/{customerId}/conversionActions:mutate  
 
 /////////////////////////////// testing the functions
 
@@ -632,9 +702,10 @@ const test = async () => {
     campaign = "customers/4824749666/campaigns/17791664075",
     location = "customers/4824749666/campaignCriteria/17791664075~2356",
     adGroup = "customers/4824749666/adGroups/136374704542",
-    image_url="https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*",
-    image_height=640,
-    image_width=635;
+    image_url =
+      "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*",
+    image_height = 640,
+    image_width = 635;
   // createCampaigns(access_token.data, "test 12", "SEARCH", customer_id, budget, p, s);
 
   // createCampaignBudget(access_token, 30, customer_id, "reach");
@@ -644,7 +715,7 @@ const test = async () => {
   // let image = await imageToBase64("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*");
   // console.log((image.length)*3/4-2);
   // uploadImageAssest(access_token,customer_id,image_url,image_height,image_width);
-  
+  // createSearchAd(access_token,customer_id,adGroup,"https://www.abc.com",["heading1","heading2","heading3"],['abc1','asdasd','hello']);
 };
 
 test();
