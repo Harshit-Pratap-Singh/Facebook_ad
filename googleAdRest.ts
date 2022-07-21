@@ -244,7 +244,7 @@ const getAccessToken = async (
         },
       }
     );
-    console.log(response?.data?.access_token);
+    // console.log(response?.data?.access_token);
     let data = response?.data?.access_token;
     return {
       success: true,
@@ -262,19 +262,13 @@ const getAccessToken = async (
 
 // getAccessToken(client_id, client_secret, refresh_token);
 
-const getCampaigns = async () => {
+const getCampaigns = async (access_token) => {
   try {
-    const access_token = await getAccessToken(
-      client_id,
-      client_secret,
-      refresh_token
-    );
-
     const response = await axios.post(
       "https://googleads.googleapis.com/v11/customers/4824749666/googleAds:search",
       {
         query:
-          "SELECT campaign.id, campaign.name, campaign.start_date, campaign.end_date, campaign.status FROM campaign ORDER BY campaign.id",
+          "SELECT campaign.id, campaign.name, campaign.start_date, campaign.end_date, campaign.status FROM campaign where campaign.id=17791664075",
       },
       {
         headers: {
@@ -398,7 +392,7 @@ const createCampaigns = async (
     console.log(response?.data?.results);
     return {
       success: true,
-      data: response?.data?.results,
+      data: response?.data?.results[0].resourceName,
     };
   } catch (err) {
     console.log(err?.response?.data);
@@ -601,11 +595,11 @@ const uploadImageAssest = async (
         },
       }
     );
-    console.log(response?.data?.results[0]?.asset?.id);
+    console.log(response?.data?.results[0].resourceName);
 
     return {
       success: true,
-      data: response?.data?.results[0]?.asset?.id,
+      data: response?.data?.results[0].resourceName,
     };
   } catch (error) {
     console.log(error?.response?.data?.error.details[0].errors);
@@ -626,7 +620,7 @@ const createSearchAd = async (
   ad_group_resource_name,
   website,
   headlines,
-  descriptions,
+  descriptions
 ) => {
   try {
     let headline_assets = [];
@@ -661,35 +655,245 @@ const createSearchAd = async (
         ],
       },
       {
-        headers:{
+        headers: {
           Authorization: `Bearer ${access_token}`,
           "developer-token": developer_token,
-        }
+        },
       }
     );
     console.log(response?.data?.results);
-    return{
-      success:true,
-      data: response?.data?.results
-    }
-    
+    return {
+      success: true,
+      data: response?.data?.results,
+    };
   } catch (error) {
     console.log(error?.response?.data?.error.details[0].errors);
-    return{
-      success: false
-    }    
+    return {
+      success: false,
+    };
+  }
+};
+
+//--------------------------------create display ad-------------------//
+
+const createDisplayAd = async (
+  access_token,
+  customer_id,
+  ad_group_resource_name,
+  website,
+  headline_text,
+  long_headline_text,
+  description_text,
+  business_name,
+  marketing_image_asset_id,
+  square_marketing_image_asset_id
+) => {
+  try {
+    const response = await axios.post(
+      `https://googleads.googleapis.com/v11/customers/${customer_id}/adGroupAds:mutate`,
+      {
+        operations: [
+          {
+            create: {
+              adGroup: ad_group_resource_name,
+              status: "PAUSED",
+              ad: {
+                finalUrls: [website],
+                responsiveDisplayAd: {
+                  headlines: [{ text: headline_text }],
+                  longHeadline: { text: long_headline_text },
+                  descriptions: [{ text: description_text }],
+                  businessName: business_name,
+                  marketingImages: [{ asset: marketing_image_asset_id }],
+                  squareMarketingImages: [
+                    { asset: square_marketing_image_asset_id },
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "developer-token": developer_token,
+        },
+      }
+    );
+
+    console.log(response?.data?.results);
+
+    return {
+      success: true,
+      data: response?.data?.results,
+    };
+  } catch (error) {
+    console.log(error?.response?.data.error.details[0].errors[0].location);
+    console.log(error?.response?.data.error.details[0].errors);
+    // console.log(error?.response?.data);
+
+    return {
+      success: false,
+    };
   }
 };
 
 //-----------------------------------attach conversion ids to ad groups-------------//
 
-//  https://googleads.googleapis.com/v11/customers/{customerId}/conversionActions:mutate  
+const createConversionActionForCampaignGoal = async (
+  access_token,
+  customer_id,
+  goal
+) => {
+  try {
+    const response = await axios.post(
+      `https://googleads.googleapis.com/v11/customers/${customer_id}/conversionActions:mutate`,
+      {
+        operations: [
+          {
+            create: {
+              name: uuidv4(),
+              type: "UPLOAD_CLICKS",
+              category: goal,
+              status: "ENABLED",
+              viewThroughLookbackWindowDays: "15",
+              valueSettings: {
+                defaultValue: 15.0,
+                alwaysUseDefaultValue: true,
+              },
+            },
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "developer-token": developer_token,
+        },
+      }
+    );
+
+    console.log(response?.data?.results);
+
+    return {
+      success: true,
+      data: response?.data?.results[0].resourceName,
+    };
+  } catch (error) {
+    console.log(error?.response?.data.error);
+    // console.log(error?.response?.data);
+
+    return {
+      success: false,
+    };
+  }
+};
+
+const createConversionUserList = async (
+  access_token,
+  customer_id,
+  conversion_action_ids
+) => {
+  try {
+    let actions = [];
+    conversion_action_ids.map((conversion_action_id) => {
+      actions.push({ conversionAction: conversion_action_id });
+    });
+
+    const response = await axios.post(
+      `https://googleads.googleapis.com/v11/customers/${customer_id}/userLists:mutate`,
+      {
+        operations: [
+          {
+            create: {
+              name: `BasicUserList ${uuidv4()}`,
+              description:
+                "A list of people who have triggered one or more conversion actions",
+              membershipStatus: "OPEN",
+              membershipLifeSpan: "365",
+              basicUserList: {
+                actions,
+              },
+            },
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "developer-token": developer_token,
+        },
+      }
+    );
+
+    console.log(response?.data?.results);
+
+    return {
+      success: true,
+      data: response?.data?.results[0]?.resourceName,
+    };
+  } catch (error) {
+    console.log(error?.response?.data.error);
+
+    return {
+      success: false,
+    };
+  }
+};
+
+const attachUserListToAdGroup = async (
+  access_token,
+  customer_id,
+  ad_group_resource_name,
+  user_list_resource_name
+) => {
+  try {
+    const response = await axios.post(
+      `https://googleads.googleapis.com/v11/customers/${customer_id}/adGroupCriteria:mutate`,
+      {
+        operations: [
+          {
+            create: {
+              adGroup: ad_group_resource_name,
+              status: "ENABLED",
+              userList: {
+                userList: user_list_resource_name,
+              },
+            },
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "developer-token": developer_token,
+        },
+      }
+    );
+
+    console.log(response?.data?.results);
+
+    return {
+      success: true,
+      data: response?.data?.results[0]?.resourceName,
+    };
+  } catch (error) {
+    console.log(error?.response?.data.error.details[0].errors);
+
+    return {
+      success: false,
+    };
+  }
+};
+
+//  https://googleads.googleapis.com/v11/customers/{customerId}/adGroupCriteria:mutate
 
 /////////////////////////////// testing the functions
 
 const test = async () => {
-  let p = 1658169000000,
-    s = 1658966160000;
+  let p = 1659348231000,
+    s = 1660125831000;
 
   // console.log(date.format(new Date(p),"YYYY-MM-DD")  );
 
@@ -700,22 +904,41 @@ const test = async () => {
   let customer_id = 4824749666,
     budget = "customers/4824749666/campaignBudgets/11164576942",
     campaign = "customers/4824749666/campaigns/17791664075",
+    campaign_display = "customers/4824749666/campaigns/17806379899",
     location = "customers/4824749666/campaignCriteria/17791664075~2356",
     adGroup = "customers/4824749666/adGroups/136374704542",
     image_url =
-      "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*",
-    image_height = 640,
-    image_width = 635;
-  // createCampaigns(access_token.data, "test 12", "SEARCH", customer_id, budget, p, s);
+      "https://workmacro.com/wp-content/uploads/2018/02/1.91-by-1-1024x538.png",
+    image_height = "538",
+    image_width = "1024",
+    image_url2 =
+      "https://www.everydogsday.net/wp-content/uploads/2017/12/image-dog-square-2.jpg",
+    image_height2 = "400",
+    image_width2 = "400",
+    searchAd = "customers/4824749666/adGroupAds/136374704542~611459746710",
+    displayAd = "customers/4824749666/adGroupAds/140566432073~611629798772",
+    conversion_id = "customers/4824749666/conversionActions/970997926",
+    conv_user_list = "customers/4824749666/userLists/7290872239",
+    attach_user_list='customers/4824749666/adGroupCriteria/140566432073~1687847039666';
+
+  // createCampaigns(access_token, "test 12", "DISPLAY", customer_id, budget, p, s);
 
   // createCampaignBudget(access_token, 30, customer_id, "reach");
   // setCampaignLocation(access_token,customer_id,campaign,['UA',"FR"]);
-  // createAdGroup(access_token,customer_id,campaign,"Reach","SEARCH_STANDARD");
+  // createAdGroup(access_token,customer_id,campaign_display,"Reach","DISPLAY_STANDARD");
   // attachKeywordsToAdGroup(access_token,customer_id,adGroup,["books",'free delivery']);
   // let image = await imageToBase64("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*");
   // console.log((image.length)*3/4-2);
-  // uploadImageAssest(access_token,customer_id,image_url,image_height,image_width);
+  // let marketing_image=(await uploadImageAssest(access_token,customer_id,image_url,image_height,image_width)).data;
+  // let square_image=(await uploadImageAssest(access_token,customer_id,image_url2,image_height2,image_width2)).data;
+
   // createSearchAd(access_token,customer_id,adGroup,"https://www.abc.com",["heading1","heading2","heading3"],['abc1','asdasd','hello']);
+  // createDisplayAd(access_token,customer_id,'customers/4824749666/adGroups/140566432073',"https://www.abc.com","heading",'long heading','description','markopolo',marketing_image,square_image);
+  // getCampaigns(access_token);
+
+  // createConversionActionForCampaignGoal(access_token,customer_id,"DEFAULT");
+  // createConversionUserList(access_token,customer_id,[conversion_id]);
+  // attachUserListToAdGroup(access_token, customer_id, 'customers/4824749666/adGroups/140566432073', conv_user_list);
 };
 
 test();

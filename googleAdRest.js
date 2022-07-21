@@ -262,11 +262,11 @@ var MAPS = {
 //---------------------------generate access token---------------------//
 var getAccessToken = function (client_id, client_secret, refresh_token) { return __awaiter(void 0, void 0, void 0, function () {
     var response, data, err_1;
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _d.trys.push([0, 2, , 3]);
+                _c.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, axios_1["default"].post("https://www.googleapis.com/oauth2/v3/token", null, {
                         params: {
                             client_id: client_id,
@@ -276,17 +276,16 @@ var getAccessToken = function (client_id, client_secret, refresh_token) { return
                         }
                     })];
             case 1:
-                response = _d.sent();
-                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.access_token);
-                data = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.access_token;
+                response = _c.sent();
+                data = (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.access_token;
                 return [2 /*return*/, {
                         success: true,
                         data: data
                     }];
             case 2:
-                err_1 = _d.sent();
+                err_1 = _c.sent();
                 // console.log(err);
-                console.log((_c = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _c === void 0 ? void 0 : _c.data);
+                console.log((_b = err_1 === null || err_1 === void 0 ? void 0 : err_1.response) === null || _b === void 0 ? void 0 : _b.data);
                 return [2 /*return*/, {
                         success: false
                     }];
@@ -295,38 +294,35 @@ var getAccessToken = function (client_id, client_secret, refresh_token) { return
     });
 }); };
 // getAccessToken(client_id, client_secret, refresh_token);
-var getCampaigns = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var access_token, response, err_2;
+var getCampaigns = function (access_token) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, err_2;
     var _a, _b;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
-                _c.trys.push([0, 3, , 4]);
-                return [4 /*yield*/, getAccessToken(client_id, client_secret, refresh_token)];
-            case 1:
-                access_token = _c.sent();
+                _c.trys.push([0, 2, , 3]);
                 return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/4824749666/googleAds:search", {
-                        query: "SELECT campaign.id, campaign.name, campaign.start_date, campaign.end_date, campaign.status FROM campaign ORDER BY campaign.id"
+                        query: "SELECT campaign.id, campaign.name, campaign.start_date, campaign.end_date, campaign.status FROM campaign where campaign.id=17791664075"
                     }, {
                         headers: {
                             Authorization: "Bearer ".concat(access_token),
                             "developer-token": developer_token
                         }
                     })];
-            case 2:
+            case 1:
                 response = _c.sent();
                 console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
                 return [2 /*return*/, {
                         success: true,
                         data: response === null || response === void 0 ? void 0 : response.data
                     }];
-            case 3:
+            case 2:
                 err_2 = _c.sent();
                 console.log((_b = err_2 === null || err_2 === void 0 ? void 0 : err_2.response) === null || _b === void 0 ? void 0 : _b.data);
                 return [2 /*return*/, {
                         success: false
                     }];
-            case 4: return [2 /*return*/];
+            case 3: return [2 /*return*/];
         }
     });
 }); };
@@ -420,7 +416,7 @@ var createCampaigns = function (access_token, campaign_name, advertising_channel
                 console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
                 return [2 /*return*/, {
                         success: true,
-                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results[0].resourceName
                     }];
             case 2:
                 err_4 = _h.sent();
@@ -572,14 +568,14 @@ var attachKeywordsToAdGroup = function (access_token, customer_id, ad_group_reso
 //---------------------------Upload image assest-------------------//
 var uploadImageAssest = function (access_token, customer_id, image_url, image_height, image_width) { return __awaiter(void 0, void 0, void 0, function () {
     var image, response, error_1;
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    return __generator(this, function (_j) {
-        switch (_j.label) {
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
             case 0:
-                _j.trys.push([0, 3, , 4]);
+                _e.trys.push([0, 3, , 4]);
                 return [4 /*yield*/, imageToBase64(image_url)];
             case 1:
-                image = _j.sent();
+                image = _e.sent();
                 return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/assets:mutate"), {
                         operations: [
                             {
@@ -607,15 +603,15 @@ var uploadImageAssest = function (access_token, customer_id, image_url, image_he
                         }
                     })];
             case 2:
-                response = _j.sent();
-                console.log((_c = (_b = (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results[0]) === null || _b === void 0 ? void 0 : _b.asset) === null || _c === void 0 ? void 0 : _c.id);
+                response = _e.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results[0].resourceName);
                 return [2 /*return*/, {
                         success: true,
-                        data: (_f = (_e = (_d = response === null || response === void 0 ? void 0 : response.data) === null || _d === void 0 ? void 0 : _d.results[0]) === null || _e === void 0 ? void 0 : _e.asset) === null || _f === void 0 ? void 0 : _f.id
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results[0].resourceName
                     }];
             case 3:
-                error_1 = _j.sent();
-                console.log((_h = (_g = error_1 === null || error_1 === void 0 ? void 0 : error_1.response) === null || _g === void 0 ? void 0 : _g.data) === null || _h === void 0 ? void 0 : _h.error.details[0].errors);
+                error_1 = _e.sent();
+                console.log((_d = (_c = error_1 === null || error_1 === void 0 ? void 0 : error_1.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error.details[0].errors);
                 return [2 /*return*/, {
                         success: false
                     }];
@@ -681,28 +677,226 @@ var createSearchAd = function (access_token, customer_id, ad_group_resource_name
         }
     });
 }); };
+//--------------------------------create display ad-------------------//
+var createDisplayAd = function (access_token, customer_id, ad_group_resource_name, website, headline_text, long_headline_text, description_text, business_name, marketing_image_asset_id, square_marketing_image_asset_id) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_3;
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/adGroupAds:mutate"), {
+                        operations: [
+                            {
+                                create: {
+                                    adGroup: ad_group_resource_name,
+                                    status: "PAUSED",
+                                    ad: {
+                                        finalUrls: [website],
+                                        responsiveDisplayAd: {
+                                            headlines: [{ text: headline_text }],
+                                            longHeadline: { text: long_headline_text },
+                                            descriptions: [{ text: description_text }],
+                                            businessName: business_name,
+                                            marketingImages: [{ asset: marketing_image_asset_id }],
+                                            squareMarketingImages: [
+                                                { asset: square_marketing_image_asset_id },
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                        ]
+                    }, {
+                        headers: {
+                            Authorization: "Bearer ".concat(access_token),
+                            "developer-token": developer_token
+                        }
+                    })];
+            case 1:
+                response = _e.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results
+                    }];
+            case 2:
+                error_3 = _e.sent();
+                console.log((_c = error_3 === null || error_3 === void 0 ? void 0 : error_3.response) === null || _c === void 0 ? void 0 : _c.data.error.details[0].errors[0].location);
+                console.log((_d = error_3 === null || error_3 === void 0 ? void 0 : error_3.response) === null || _d === void 0 ? void 0 : _d.data.error.details[0].errors);
+                // console.log(error?.response?.data);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 //-----------------------------------attach conversion ids to ad groups-------------//
-//  https://googleads.googleapis.com/v11/customers/{customerId}/conversionActions:mutate  
+var createConversionActionForCampaignGoal = function (access_token, customer_id, goal) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_4;
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                _d.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/conversionActions:mutate"), {
+                        operations: [
+                            {
+                                create: {
+                                    name: (0, uuid_1.v4)(),
+                                    type: "UPLOAD_CLICKS",
+                                    category: goal,
+                                    status: "ENABLED",
+                                    viewThroughLookbackWindowDays: "15",
+                                    valueSettings: {
+                                        defaultValue: 15.0,
+                                        alwaysUseDefaultValue: true
+                                    }
+                                }
+                            },
+                        ]
+                    }, {
+                        headers: {
+                            Authorization: "Bearer ".concat(access_token),
+                            "developer-token": developer_token
+                        }
+                    })];
+            case 1:
+                response = _d.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results[0].resourceName
+                    }];
+            case 2:
+                error_4 = _d.sent();
+                console.log((_c = error_4 === null || error_4 === void 0 ? void 0 : error_4.response) === null || _c === void 0 ? void 0 : _c.data.error);
+                // console.log(error?.response?.data);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var createConversionUserList = function (access_token, customer_id, conversion_action_ids) { return __awaiter(void 0, void 0, void 0, function () {
+    var actions_1, response, error_5;
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 2, , 3]);
+                actions_1 = [];
+                conversion_action_ids.map(function (conversion_action_id) {
+                    actions_1.push({ conversionAction: conversion_action_id });
+                });
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/userLists:mutate"), {
+                        operations: [
+                            {
+                                create: {
+                                    name: "BasicUserList ".concat((0, uuid_1.v4)()),
+                                    description: "A list of people who have triggered one or more conversion actions",
+                                    membershipStatus: "OPEN",
+                                    membershipLifeSpan: "365",
+                                    basicUserList: {
+                                        actions: actions_1
+                                    }
+                                }
+                            },
+                        ]
+                    }, {
+                        headers: {
+                            Authorization: "Bearer ".concat(access_token),
+                            "developer-token": developer_token
+                        }
+                    })];
+            case 1:
+                response = _e.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_c = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results[0]) === null || _c === void 0 ? void 0 : _c.resourceName
+                    }];
+            case 2:
+                error_5 = _e.sent();
+                console.log((_d = error_5 === null || error_5 === void 0 ? void 0 : error_5.response) === null || _d === void 0 ? void 0 : _d.data.error);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+var attachUserListToAdGroup = function (access_token, customer_id, ad_group_resource_name, user_list_resource_name) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_6;
+    var _a, _b, _c, _d;
+    return __generator(this, function (_e) {
+        switch (_e.label) {
+            case 0:
+                _e.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1["default"].post("https://googleads.googleapis.com/v11/customers/".concat(customer_id, "/adGroupCriteria:mutate"), {
+                        operations: [
+                            {
+                                create: {
+                                    adGroup: ad_group_resource_name,
+                                    status: "ENABLED",
+                                    userList: {
+                                        userList: user_list_resource_name
+                                    }
+                                }
+                            },
+                        ]
+                    }, {
+                        headers: {
+                            Authorization: "Bearer ".concat(access_token),
+                            "developer-token": developer_token
+                        }
+                    })];
+            case 1:
+                response = _e.sent();
+                console.log((_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.results);
+                return [2 /*return*/, {
+                        success: true,
+                        data: (_c = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.results[0]) === null || _c === void 0 ? void 0 : _c.resourceName
+                    }];
+            case 2:
+                error_6 = _e.sent();
+                console.log((_d = error_6 === null || error_6 === void 0 ? void 0 : error_6.response) === null || _d === void 0 ? void 0 : _d.data.error.details[0].errors);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+//  https://googleads.googleapis.com/v11/customers/{customerId}/adGroupCriteria:mutate
 /////////////////////////////// testing the functions
 var test = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var p, s, access_token, customer_id, budget, campaign, location, adGroup, image_url, image_height, image_width;
+    var p, s, access_token, customer_id, budget, campaign, campaign_display, location, adGroup, image_url, image_height, image_width, image_url2, image_height2, image_width2, searchAd, displayAd, conversion_id, conv_user_list;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                p = 1658169000000, s = 1658966160000;
+                p = 1659348231000, s = 1660125831000;
                 return [4 /*yield*/, getAccessToken(client_id, client_secret, refresh_token)];
             case 1:
                 access_token = (_a.sent()).data;
-                customer_id = 4824749666, budget = "customers/4824749666/campaignBudgets/11164576942", campaign = "customers/4824749666/campaigns/17791664075", location = "customers/4824749666/campaignCriteria/17791664075~2356", adGroup = "customers/4824749666/adGroups/136374704542", image_url = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*", image_height = 640, image_width = 635;
-                // createCampaigns(access_token.data, "test 12", "SEARCH", customer_id, budget, p, s);
+                customer_id = 4824749666, budget = "customers/4824749666/campaignBudgets/11164576942", campaign = "customers/4824749666/campaigns/17791664075", campaign_display = "customers/4824749666/campaigns/17806379899", location = "customers/4824749666/campaignCriteria/17791664075~2356", adGroup = "customers/4824749666/adGroups/136374704542", image_url = "https://workmacro.com/wp-content/uploads/2018/02/1.91-by-1-1024x538.png", image_height = "538", image_width = "1024", image_url2 = "https://www.everydogsday.net/wp-content/uploads/2017/12/image-dog-square-2.jpg", image_height2 = "400", image_width2 = "400", searchAd = "customers/4824749666/adGroupAds/136374704542~611459746710", displayAd = "customers/4824749666/adGroupAds/140566432073~611629798772", conversion_id = "customers/4824749666/conversionActions/970997926", conv_user_list = "customers/4824749666/userLists/7290872239";
+                // createCampaigns(access_token, "test 12", "DISPLAY", customer_id, budget, p, s);
                 // createCampaignBudget(access_token, 30, customer_id, "reach");
                 // setCampaignLocation(access_token,customer_id,campaign,['UA',"FR"]);
-                // createAdGroup(access_token,customer_id,campaign,"Reach","SEARCH_STANDARD");
+                // createAdGroup(access_token,customer_id,campaign_display,"Reach","DISPLAY_STANDARD");
                 // attachKeywordsToAdGroup(access_token,customer_id,adGroup,["books",'free delivery']);
                 // let image = await imageToBase64("https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/golden-retriever-royalty-free-image-506756303-1560962726.jpg?crop=0.672xw:1.00xh;0.166xw,0&resize=640:*");
                 // console.log((image.length)*3/4-2);
-                // uploadImageAssest(access_token,customer_id,image_url,image_height,image_width);
-                createSearchAd(access_token, customer_id, adGroup, "https://www.abc.com", ["heading1", "heading2", "heading3"], ['abc1', 'asdasd', 'hello']);
+                // let marketing_image=(await uploadImageAssest(access_token,customer_id,image_url,image_height,image_width)).data;
+                // let square_image=(await uploadImageAssest(access_token,customer_id,image_url2,image_height2,image_width2)).data;
+                // createSearchAd(access_token,customer_id,adGroup,"https://www.abc.com",["heading1","heading2","heading3"],['abc1','asdasd','hello']);
+                // createDisplayAd(access_token,customer_id,'customers/4824749666/adGroups/140566432073',"https://www.abc.com","heading",'long heading','description','markopolo',marketing_image,square_image);
+                // getCampaigns(access_token);
+                // createConversionActionForCampaignGoal(access_token,customer_id,"DEFAULT");
+                // createConversionUserList(access_token,customer_id,[conversion_id]);
+                attachUserListToAdGroup(access_token, customer_id, 'customers/4824749666/adGroups/140566432073', conv_user_list);
                 return [2 /*return*/];
         }
     });
