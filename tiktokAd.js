@@ -256,13 +256,54 @@ var createAd = function (acccess_token, advertiser_id, image_id, adgroup_id, vid
         }
     });
 }); };
+var previewAd = function (acccess_token, advertiser_id, ad_id) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, error_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, axios_1["default"].post("https://sandbox-ads.tiktok.com/open_api/v1.2/creative/ads_preview/create/", {
+                        advertiser_id: advertiser_id,
+                        material_type: "AD",
+                        ad_id: ad_id
+                    }, {
+                        headers: {
+                            "Access-Token": acccess_token
+                        }
+                    })];
+            case 1:
+                response = _a.sent();
+                if (response.data.code != 0) {
+                    console.log("ERROR-->", response.data);
+                    return [2 /*return*/, {
+                            success: false
+                        }];
+                }
+                console.log(response.data);
+                console.log(response.data.data.preview_link);
+                return [2 /*return*/, {
+                        success: true,
+                        data: response.data.data.preview_link
+                    }];
+            case 2:
+                error_6 = _a.sent();
+                console.log("ERROR-->", error_6);
+                return [2 /*return*/, {
+                        success: false
+                    }];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 var test = function () {
     var acccess_token = process.env.TICTOK_ACCESS_TOKEN;
-    var advertiser_id = "7126440213424996354", campaign_id = "1739926054224929", adgroup_id = "1739931427225618", image_url = "https://media.4-paws.org/8/e/a/2/8ea2d850a774c6747db95dddfd21bec0e1733c09/VIER%20PFOTEN_2018-12-02_023.jpg", video_url = "https://rr3---sn-ci5gup-a3vz.googlevideo.com/videoplayback?expire=1659628310&ei=tZbrYrbZOsTL0wWzmpAg&ip=45.8.134.210&id=o-AJ3KehAP-pl1ne3fwMgiwlBw4d6dx-AEe9oLTOJQ_TCs&itag=298&source=youtube&requiressl=yes&vprv=1&mime=video%2Fmp4&gir=yes&clen=3018784&dur=49.082&lmt=1643298109409588&keepalive=yes&fexp=24001373,24007246,24239125&beids=24239125&c=ANDROID&rbqsm=fr&txp=5535434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAMl3prfZ5_fNaymPUpyTSqu0CqdpQ7BofRVrHQDFeyD2AiBQYwDZeQ3cBs7E-geXJLiZWtSPp9FiIfVDgi-H1F7edw%3D%3D&title=Dogs+That+Fly+-+Malinois+%26+Alsatian+Dogs+Show+Their+Jumping+Agility+++%23Shorts&redirect_counter=1&rm=sn-aigesd7s&req_id=389b1ae6da9ba3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&mh=SL&mip=2401:4900:45ec:aae2:3d8b:3384:1cb6:f5ea&mm=31&mn=sn-ci5gup-a3vz&ms=au&mt=1659606369&mv=u&mvi=3&pl=48&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRgIhAIRLWWxGSQxW0LxiMb1IbprX_XY7yxzo6X-pxuzY0pUwAiEAvN3xNmI9HU7iPH85754JvQEJx5cZ6v_PAIKo7Mvo2qg%3D", image_id = "ad-site-i18n-sg/202208045d0d167d05c3c59a408495bc", video_id = "v10033g50000cblpe83c77u8i08fbm30";
+    var advertiser_id = "7126440213424996354", campaign_id = "1739926054224929", adgroup_id = "1739931427225618", image_url = "https://media.4-paws.org/8/e/a/2/8ea2d850a774c6747db95dddfd21bec0e1733c09/VIER%20PFOTEN_2018-12-02_023.jpg", video_url = "https://rr3---sn-ci5gup-a3vz.googlevideo.com/videoplayback?expire=1659628310&ei=tZbrYrbZOsTL0wWzmpAg&ip=45.8.134.210&id=o-AJ3KehAP-pl1ne3fwMgiwlBw4d6dx-AEe9oLTOJQ_TCs&itag=298&source=youtube&requiressl=yes&vprv=1&mime=video%2Fmp4&gir=yes&clen=3018784&dur=49.082&lmt=1643298109409588&keepalive=yes&fexp=24001373,24007246,24239125&beids=24239125&c=ANDROID&rbqsm=fr&txp=5535434&sparams=expire%2Cei%2Cip%2Cid%2Citag%2Csource%2Crequiressl%2Cvprv%2Cmime%2Cgir%2Cclen%2Cdur%2Clmt&sig=AOq0QJ8wRQIhAMl3prfZ5_fNaymPUpyTSqu0CqdpQ7BofRVrHQDFeyD2AiBQYwDZeQ3cBs7E-geXJLiZWtSPp9FiIfVDgi-H1F7edw%3D%3D&title=Dogs+That+Fly+-+Malinois+%26+Alsatian+Dogs+Show+Their+Jumping+Agility+++%23Shorts&redirect_counter=1&rm=sn-aigesd7s&req_id=389b1ae6da9ba3ee&cms_redirect=yes&cmsv=e&ipbypass=yes&mh=SL&mip=2401:4900:45ec:aae2:3d8b:3384:1cb6:f5ea&mm=31&mn=sn-ci5gup-a3vz&ms=au&mt=1659606369&mv=u&mvi=3&pl=48&lsparams=ipbypass,mh,mip,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRgIhAIRLWWxGSQxW0LxiMb1IbprX_XY7yxzo6X-pxuzY0pUwAiEAvN3xNmI9HU7iPH85754JvQEJx5cZ6v_PAIKo7Mvo2qg%3D", image_id = "ad-site-i18n-sg/202208045d0d167d05c3c59a408495bc", video_id = "v10033g50000cblpe83c77u8i08fbm30", ad_id = "1740224541701153";
     //   createCampaign("test 4", "REACH", advertiser_id, acccess_token);
     //   createAdGroup("test 2", advertiser_id, acccess_token, campaign_id);
     //   uploadImageViaUrl(acccess_token,advertiser_id,image_url);
     // uploadVideoViaUrl(acccess_token,advertiser_id,video_url);
-    createAd(acccess_token, advertiser_id, image_id, adgroup_id, video_id);
+    //image and video aspect ratio should be same
+    // createAd(acccess_token, advertiser_id, image_id, adgroup_id,video_id);
+    previewAd(acccess_token, advertiser_id, ad_id);
 };
 test();
