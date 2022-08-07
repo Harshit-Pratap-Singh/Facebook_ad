@@ -131,3 +131,5 @@ dist
 
 index.ts
 index.js
+
+*.js
